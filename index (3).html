@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Campus Shop</title>
+<style>
+:root{--bg:#f4f1ec;--card:#fff;--text:#1f1b16;--muted:#7a7268;--line:#e6e0d6;--accent:#d97706;--accent2:#b45309;--soft:#fff3df;--ok:#0b7a4b;--bad:#b42318;--on:#fff;--shadow:0 2px 10px rgba(60,40,10,.08);color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#15130f;--card:#201d18;--text:#f3efe8;--muted:#a39a8d;--line:#38332b;--accent:#f59e0b;--accent2:#d97706;--soft:#3a2c12;--ok:#34d399;--bad:#f97066;--on:#1c1608;--shadow:0 2px 10px rgba(0,0,0,.4);color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#15130f;--card:#201d18;--text:#f3efe8;--muted:#a39a8d;--line:#38332b;--accent:#f59e0b;--accent2:#d97706;--soft:#3a2c12;--ok:#34d399;--bad:#f97066;--on:#1c1608;--shadow:0 2px 10px rgba(0,0,0,.4);color-scheme:dark}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+#wall{position:fixed;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none}
+body{margin:0;background:transparent;color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.4}
+.hero{background:linear-gradient(135deg,var(--accent2),var(--accent));color:var(--on);padding:18px 16px 54px}
+.hero .in{max-width:1040px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px}
+.logo{width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,.25);display:grid;place-items:center;font-size:1.5rem}
+.brand h1{margin:0;font-size:1.35rem}.brand p{margin:0;font-size:.82rem;opacity:.85}
+.chips{display:flex;gap:8px}
+.chip{background:rgba(255,255,255,.22);border-radius:12px;padding:6px 12px;text-align:center;font-size:.72rem}
+.chip b{display:block;font-size:1.05rem}
+.wrap{max-width:1040px;margin:-36px auto 0;padding:0 16px 24px}
+.cols{display:grid;grid-template-columns:1.5fr 1fr;gap:16px;align-items:start}
+@media(max-width:820px){.cols{grid-template-columns:1fr}}
+.card{background:color-mix(in srgb,var(--card) 86%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:16px;box-shadow:var(--shadow)}
+h2{font-size:1rem;margin:0 0 10px}
+.sticky{position:sticky;top:12px}
+input,select{width:100%;padding:11px 12px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--text);font-size:1rem}
+input:focus,select:focus{outline:2px solid var(--accent);border-color:transparent}
+button{font:inherit;cursor:pointer}
+.lbl{display:block;font-size:.8rem;color:var(--muted);margin-bottom:4px}
+.search{margin-bottom:10px}
+.cats{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;margin-bottom:6px}
+.cat{flex:none;border:1px solid var(--line);background:var(--card);color:var(--text);padding:6px 14px;border-radius:99px;font-size:.88rem}
+.cat.on{background:var(--accent);color:var(--on);border-color:var(--accent);font-weight:600}
+.prods{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:10px}
+.prod{position:relative;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 8px;text-align:center;color:var(--text);transition:transform .12s,box-shadow .12s}
+.prod:hover{transform:translateY(-2px);box-shadow:var(--shadow);border-color:var(--accent)}
+.prod:active{transform:scale(.96)}
+.prod .nm{font-size:.9rem;display:block;min-height:2.4em}
+.prod .pr{display:inline-block;margin-top:4px;background:var(--soft);color:var(--accent2);font-weight:700;border-radius:99px;padding:2px 10px;font-size:.85rem}
+.bdg{position:absolute;top:6px;right:6px;background:var(--accent);color:var(--on);border-radius:99px;min-width:22px;height:22px;display:grid;place-items:center;font-size:.75rem;font-weight:700}
+.line{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--line)}
+.line .nm{flex:1;font-size:.9rem}.line small{color:var(--muted)}
+.step{display:flex;align-items:center;gap:6px}
+.step button{width:26px;height:26px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--text)}
+.lt{width:74px;text-align:right;font-weight:600;font-size:.9rem}
+.x{background:none;border:0;color:var(--muted);font-size:1.1rem}
+.empty{color:var(--muted);text-align:center;padding:18px 0;font-size:.9rem}
+.promo{display:flex;gap:6px;margin:10px 0}
+.promo button{border:0;border-radius:12px;background:var(--soft);color:var(--accent2);padding:0 14px;font-weight:600}
+.row{display:flex;justify-content:space-between;font-size:.92rem;padding:3px 0;color:var(--muted)}
+.grand{display:flex;justify-content:space-between;font-size:1.35rem;font-weight:800;margin:6px 0 12px}
+.methods{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.m{border:1.5px solid var(--line);background:var(--card);color:var(--text);border-radius:12px;padding:9px 4px;font-size:.78rem;text-align:center}
+.m span{display:block;font-size:1.3rem}
+.m.on{border-color:var(--accent);background:var(--soft);font-weight:700}
+.msg{color:var(--bad);font-size:.86rem;min-height:1.2em;margin:6px 0}
+.pay{width:100%;border:0;border-radius:14px;background:linear-gradient(135deg,var(--accent2),var(--accent));color:var(--on);padding:14px;font-size:1.05rem;font-weight:700}
+.pay:active{transform:scale(.98)}
+.receipt{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.84rem;background:var(--bg);border-radius:12px;padding:14px;border-top:6px double var(--line)}
+.receipt .r{display:flex;justify-content:space-between;gap:8px}
+.receipt hr{border:0;border-top:1px dashed var(--muted);margin:8px 0}
+.new{margin-top:10px;width:100%;border:1.5px solid var(--accent);background:none;color:var(--accent2);padding:9px;border-radius:12px;font-weight:600}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:8px;margin:10px 0}
+.stat{background:var(--soft);border-radius:12px;padding:8px;text-align:center;font-size:.72rem;color:var(--muted)}
+.stat b{display:block;font-size:1rem;color:var(--accent2)}
+.hist{font-size:.85rem;padding:8px 0;border-bottom:1px solid var(--line)}
+.vr{margin-left:6px;border:1px solid var(--accent);background:none;color:var(--accent2);border-radius:99px;padding:2px 10px;font-size:.78rem}
+.note{color:var(--muted);font-size:.78rem;margin:8px 0 0}
+details summary{cursor:pointer;font-weight:600;font-size:.95rem}
+details[open] summary{margin-bottom:10px}
+.add{display:grid;grid-template-columns:1fr 90px;gap:6px;margin-bottom:6px}
+.addb{width:100%;border:0;border-radius:12px;background:var(--accent);color:var(--on);padding:10px;font-weight:600}
+.addb.rm{background:var(--bad);color:#fff}
+pre{margin:0;white-space:pre-wrap;word-break:break-word;font-size:.78rem;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px}
+.toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translate(-50%,30px);background:var(--text);color:var(--bg);padding:10px 18px;border-radius:99px;font-size:.9rem;opacity:0;transition:.25s;pointer-events:none;z-index:20}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .prod .pr,:root:not([data-theme="light"]) .stat b,:root:not([data-theme="light"]) .promo button,:root:not([data-theme="light"]) .new,:root:not([data-theme="light"]) .vr{color:var(--accent)}}
+</style>
+</head>
+<body>
+<canvas id="wall" aria-hidden="true"></canvas>
+<div class="hero"><div class="in">
+  <div class="brand"><div class="logo">🛍️</div><div><h1>Campus Shop</h1><p id="todayLbl">Quick checkout and receipts</p></div></div>
+  <div class="chips"><div class="chip"><b id="hSales">0</b>sales today</div><div class="chip"><b id="hRev">GH₵ 0.00</b>revenue today</div></div>
+</div></div>
+
+<div class="wrap"><div class="cols">
+  <div>
+    <div class="card">
+      <input class="search" id="search" placeholder="🔍  Search items…">
+      <div class="cats" id="cats"></div>
+      <div class="prods" id="prods"></div>
+    </div>
+    <div class="card">
+      <h2 id="salesTitle">Sales</h2>
+      <label class="lbl" for="dayPick">View sales for</label>
+      <select id="dayPick"></select>
+      <div class="stats" id="summary"></div>
+      <div id="hist"></div>
+      <button class="new" id="csv">Download this day’s sales (CSV)</button>
+      <p class="note">Sales are saved on this device. A new day starts fresh automatically, and every earlier day stays available in the list above.</p>
+    </div>
+    <div class="card"><details><summary>Manage items</summary>
+      <div class="add"><input id="nName" placeholder="Item name"><input id="nPrice" type="number" min="0" step="0.5" placeholder="Price"></div>
+      <select id="nCat" style="margin-bottom:8px"></select>
+      <button class="addb" id="addItem">Add to catalog</button>
+      <label class="lbl" for="rmItem" style="margin-top:14px">Remove an item</label>
+      <select id="rmItem" style="margin-bottom:8px"></select>
+      <button class="addb rm" id="removeItem">Remove selected item</button>
+    </details></div>
+    <div class="card"><details><summary>Live array view</summary><pre id="arrs"></pre></details></div>
+  </div>
+
+  <div class="sticky">
+    <div class="card" id="cartCard">
+      <h2>🧾 Current order <span id="cnt" style="color:var(--muted);font-weight:400"></span></h2>
+      <div id="cart"></div>
+      <div class="promo"><input id="promo" placeholder="Promo code (try STUDENT10)"><button id="applyPromo">Apply</button></div>
+      <div class="row"><span>Subtotal</span><span id="sub">GH₵ 0.00</span></div>
+      <div class="row" id="discRow" hidden><span id="discLbl">Discount</span><span id="disc"></span></div>
+      <div class="grand"><span>Total</span><span id="total">GH₵ 0.00</span></div>
+      <div class="methods" id="methods"></div>
+      <div id="cashBox"><input id="tender" type="number" min="0" step="0.5" placeholder="Cash given by customer (GH₵)"></div>
+      <div id="momoBox" hidden><input id="phone" inputmode="tel" placeholder="Mobile money number (optional)"></div>
+      <div class="msg" id="msg"></div>
+      <button class="pay" id="pay">Complete payment</button>
+    </div>
+    <div class="card" id="rcpCard" hidden>
+      <h2 id="rcpTitle">✅ Payment received</h2>
+      <div class="receipt" id="rcp"></div>
+      <button class="new" id="newSale">Start new sale</button>
+    </div>
+  </div>
+</div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const money = n => "GH₵ " + n.toFixed(2);
+const esc = t => String(t).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const $ = id => document.getElementById(id);
+
+// ---- the arrays ----
+const categories = ["All","Stationery","Food","Drinks","Tech"];
+const catalog = [
+  {name:"Exercise Book",price:8,cat:"Stationery"},{name:"Biro Pen",price:2,cat:"Stationery"},
+  {name:"Calculator",price:85,cat:"Stationery"},{name:"Meat Pie",price:10,cat:"Food"},
+  {name:"Biscuits",price:4,cat:"Food"},{name:"Bottled Water",price:3,cat:"Drinks"},
+  {name:"Sobolo",price:5,cat:"Drinks"},{name:"USB Flash Drive",price:60,cat:"Tech"},
+  {name:"Earphones",price:35,cat:"Tech"}
+];
+const paymentMethods = [{name:"Cash",icon:"💵"},{name:"Mobile Money",icon:"📱"},{name:"Card",icon:"💳"}];
+const promoCodes = [{code:"STUDENT10",pct:10},{code:"WELCOME5",pct:5}];
+let cart = [];
+
+// ---- saving: sales are stored per day, e.g. days["2026-11-24"] = [sale, sale, ...] ----
+const KEY = "campus-shop-v1";
+let store = {days:{}, items:null};
+try { const raw = JSON.parse(localStorage.getItem(KEY) || "null"); if (raw && raw.days) store = raw; } catch(e) {}
+if (Array.isArray(store.items) && store.items.length){ catalog.length = 0; catalog.push(...store.items); }
+const save = () => { store.items = catalog; try { localStorage.setItem(KEY, JSON.stringify(store)); } catch(e) {} };
+const todayKey = () => { const d = new Date(); return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0"); };
+const dayLabel = k => new Date(k + "T00:00:00").toLocaleDateString(undefined, {weekday:"short", day:"numeric", month:"short", year:"numeric"});
+
+let curDay = todayKey();
+let sales = store.days[curDay] = store.days[curDay] || [];   // today's sales array
+let viewDay = curDay;                                         // the day shown in the history list
+const viewSales = () => store.days[viewDay] || [];
+
+function rollover(){                                          // a new day starts fresh automatically
+  const k = todayKey(); if (k === curDay) return;
+  const wasToday = viewDay === curDay;
+  curDay = k; sales = store.days[k] = store.days[k] || [];
+  if (wasToday) viewDay = k;
+  save(); render();
+}
+
+let method = "Cash", cat = "All", promo = null, toastT;
+const subtotal = () => cart.reduce((s,i) => s + i.price * i.qty, 0);          // reduce()
+const discount = () => promo ? subtotal() * promo.pct / 100 : 0;
+const total = () => subtotal() - discount();
+
+function toast(t){ const e = $("toast"); e.textContent = t; e.classList.add("show"); clearTimeout(toastT); toastT = setTimeout(() => e.classList.remove("show"), 1400); }
+
+function renderProducts(){
+  $("cats").innerHTML = categories.map(c => `<button class="cat ${c===cat?"on":""}" data-cat="${c}">${c}</button>`).join("");
+  const q = $("search").value.trim().toLowerCase();
+  const list = catalog.filter(p => (cat === "All" || p.cat === cat) && p.name.toLowerCase().includes(q));   // filter()
+  $("prods").innerHTML = list.length ? list.map(p => {
+    const inCart = cart.find(c => c.name === p.name);                                                       // find()
+    return `<button class="prod" data-add="${catalog.indexOf(p)}">${inCart?`<span class="bdg">${inCart.qty}</span>`:""}<span class="nm">${esc(p.name)}</span><span class="pr">${money(p.price)}</span></button>`;
+  }).join("") : `<div class="empty" style="grid-column:1/-1">No items found.</div>`;
+}
+
+function renderCart(){
+  $("cart").innerHTML = cart.length ? cart.map((c,i) =>
+    `<div class="line"><span class="nm">${esc(c.name)}<br><small>${money(c.price)} each</small></span>
+     <span class="step"><button data-dec="${i}">−</button><b>${c.qty}</b><button data-inc="${i}">+</button></span>
+     <span class="lt">${money(c.price*c.qty)}</span><button class="x" data-rm="${i}">×</button></div>`).join("")
+    : `<div class="empty">🛒<br>Cart is empty. Tap an item to add it.</div>`;
+  const n = cart.reduce((s,i) => s + i.qty, 0);
+  $("cnt").textContent = n ? `(${n} item${n>1?"s":""})` : "";
+  $("sub").textContent = money(subtotal());
+  $("discRow").hidden = !promo;
+  if (promo){ $("discLbl").textContent = `Discount (${promo.code}, ${promo.pct}%)`; $("disc").textContent = "− " + money(discount()); }
+  $("total").textContent = money(total());
+  $("pay").textContent = cart.length ? `Pay ${money(total())}` : "Complete payment";
+  $("methods").innerHTML = paymentMethods.map(m => `<button class="m ${m.name===method?"on":""}" data-m="${m.name}"><span>${m.icon}</span>${m.name}</button>`).join("");
+  $("cashBox").hidden = method !== "Cash"; $("momoBox").hidden = method !== "Mobile Money";
+}
+
+function renderMeta(){
+  const todayRev = sales.reduce((a,s) => a + s.total, 0);
+  $("hSales").textContent = sales.length; $("hRev").textContent = money(todayRev);
+  $("todayLbl").textContent = dayLabel(curDay);
+
+  const days = [...new Set([curDay, ...Object.keys(store.days).filter(k => store.days[k].length)])].sort().reverse();   // array of days
+  $("dayPick").innerHTML = days.map(k => { const n = (store.days[k]||[]).length; return `<option value="${k}">${dayLabel(k)}${k===curDay?" · Today":""} (${n} sale${n===1?"":"s"})</option>`; }).join("");
+  $("dayPick").value = viewDay;
+
+  const vs = viewSales(), rev = vs.reduce((a,s) => a + s.total, 0);
+  $("salesTitle").textContent = viewDay === curDay ? "Today’s sales" : "Sales for " + dayLabel(viewDay);
+  $("summary").innerHTML = `<div class="stat"><b>${vs.length}</b>sales</div><div class="stat"><b>${money(rev)}</b>total</div>` +
+    paymentMethods.map(pm => `<div class="stat"><b>${money(vs.filter(s => s.method===pm.name).reduce((a,s)=>a+s.total,0))}</b>${pm.icon} ${pm.name}</div>`).join("");
+  $("hist").innerHTML = vs.length ? vs.map((s,i) => ({s,i})).reverse().map(({s,i}) =>
+    `<div class="hist"><b>#${s.no}</b> · ${s.time} · ${s.items.map(x => x.qty+"× "+esc(x.name)).join(", ")}<br><b>${money(s.total)}</b> · ${s.method} <button class="vr" data-rcp="${i}">View receipt</button></div>`).join("")
+    : `<div class="empty">No sales for this day.</div>`;
+
+  $("rmItem").innerHTML = catalog.map((c,i) => `<option value="${i}">${esc(c.name)}</option>`).join("");
+  $("arrs").textContent =
+    "catalog = " + JSON.stringify(catalog.map(c => c.name + " " + c.price)) + "\n\n" +
+    "cart = " + JSON.stringify(cart.map(c => ({name:c.name, price:c.price, qty:c.qty}))) + "\n\n" +
+    "paymentMethods = " + JSON.stringify(paymentMethods.map(m => m.name)) + "\n\n" +
+    "days saved = " + JSON.stringify(Object.keys(store.days).sort()) + "\n\n" +
+    "today's sales = " + JSON.stringify(sales.map(s => ({no:s.no, total:s.total, method:s.method})));
+}
+const render = () => { renderProducts(); renderCart(); renderMeta(); };
+
+function pay(){
+  rollover();
+  const t = total(); $("msg").textContent = "";
+  if (!cart.length){ $("msg").textContent = "Add at least one item first."; return; }
+  let paid = t, change = 0, note = "";
+  if (method === "Cash"){
+    paid = parseFloat($("tender").value);
+    if (isNaN(paid) || paid < t){ $("msg").textContent = "Cash given is less than the total."; return; }
+    change = paid - t;
+  }
+  if (method === "Mobile Money" && $("phone").value.trim()) note = "MoMo: " + $("phone").value.trim();
+  const sale = {no:sales.length+1, date:curDay, time:new Date().toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"}),
+    items:cart.map(i => ({...i})), subtotal:subtotal(), discount:discount(), promo:promo?promo.code:"", total:t, method, paid, change, note};
+  sales.push(sale);                                                            // push() saves the receipt
+  save();
+  cart = []; promo = null; viewDay = curDay; $("tender").value = ""; $("phone").value = ""; $("promo").value = "";
+  showReceipt(sale); render(); toast("Payment received ✓");
+}
+
+function showReceipt(s, again){
+  $("cartCard").hidden = true; $("rcpCard").hidden = false;
+  $("rcpTitle").textContent = again ? "🧾 Receipt #" + s.no + " (copy)" : "✅ Payment received";
+  $("rcp").innerHTML = `<div style="text-align:center"><b>🛍️ CAMPUS SHOP</b><br>Receipt #${s.no}<br>${dayLabel(s.date || curDay)} · ${s.time}</div><hr>` +
+    s.items.map(i => `<div class="r"><span>${i.qty} × ${esc(i.name)}</span><span>${money(i.price*i.qty)}</span></div>`).join("") + `<hr>` +
+    `<div class="r"><span>Subtotal</span><span>${money(s.subtotal)}</span></div>` +
+    (s.discount ? `<div class="r"><span>Discount (${esc(s.promo)})</span><span>− ${money(s.discount)}</span></div>` : "") +
+    `<div class="r"><b>TOTAL</b><b>${money(s.total)}</b></div><hr><div class="r"><span>Paid by</span><span>${s.method}</span></div>` +
+    (s.method === "Cash" ? `<div class="r"><span>Given</span><span>${money(s.paid)}</span></div><div class="r"><span>Change</span><span>${money(s.change)}</span></div>` : "") +
+    (s.note ? `<div>${esc(s.note)}</div>` : "") + `<div style="text-align:center;margin-top:10px">Thank you, come again!</div>`;
+  if (again) $("rcpCard").scrollIntoView({behavior:"smooth", block:"start"});
+}
+
+function downloadCsv(){
+  const vs = viewSales();
+  if (!vs.length){ toast("No sales to download"); return; }
+  const q = v => '"' + String(v).replace(/"/g, '""') + '"';
+  const rows = [["Receipt","Date","Time","Items","Subtotal","Discount","Total","Payment"]].concat(
+    vs.map(s => [s.no, s.date || viewDay, s.time, s.items.map(i => i.qty+"x "+i.name).join("; "), s.subtotal.toFixed(2), s.discount.toFixed(2), s.total.toFixed(2), s.method]));
+  const blob = new Blob([rows.map(r => r.map(q).join(",")).join("\n")], {type:"text/csv"});
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "sales-" + viewDay + ".csv";
+  document.body.appendChild(a); a.click(); a.remove();
+}
+
+document.addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return; const d = b.dataset;
+  if (d.add !== undefined){
+    const p = catalog[+d.add], f = cart.find(c => c.name === p.name);
+    if (f) f.qty++; else cart.push({name:p.name, price:p.price, qty:1});                              // push()
+    toast(p.name + " added"); render();
+  }
+  else if (d.cat !== undefined){ cat = d.cat; renderProducts(); }
+  else if (d.inc !== undefined){ cart[+d.inc].qty++; render(); }
+  else if (d.dec !== undefined){ const i = +d.dec; if (--cart[i].qty < 1) cart.splice(i,1); render(); }  // splice()
+  else if (d.rm !== undefined){ cart.splice(+d.rm,1); render(); }
+  else if (d.m !== undefined){ method = d.m; $("msg").textContent = ""; renderCart(); }
+  else if (d.rcp !== undefined){ showReceipt(viewSales()[+d.rcp], true); }
+});
+$("search").oninput = renderProducts;
+$("pay").onclick = pay;
+$("csv").onclick = downloadCsv;
+$("dayPick").onchange = e => { viewDay = e.target.value; renderMeta(); };
+$("newSale").onclick = () => { $("rcpCard").hidden = true; $("cartCard").hidden = false; };
+$("applyPromo").onclick = () => {
+  const code = $("promo").value.trim().toUpperCase();
+  const found = promoCodes.find(p => p.code === code);
+  if (found){ promo = found; toast("Promo applied: " + found.pct + "% off"); } else { promo = null; toast(code ? "Invalid promo code" : "Enter a code first"); }
+  renderCart();
+};
+$("nCat").innerHTML = categories.slice(1).map(c => `<option>${c}</option>`).join("");
+$("addItem").onclick = () => {
+  const n = $("nName").value.trim(), p = parseFloat($("nPrice").value);
+  if (!n || isNaN(p) || p < 0){ toast("Enter a name and price"); return; }
+  catalog.push({name:n, price:p, cat:$("nCat").value}); save();
+  $("nName").value = $("nPrice").value = ""; toast("Item added"); render();
+};
+$("removeItem").onclick = () => {
+  const i = +$("rmItem").value; if (isNaN(i) || !catalog[i]) return;
+  const name = catalog[i].name; catalog.splice(i,1); cart = cart.filter(c => c.name !== name); save(); toast(name + " removed"); render();
+};
+setInterval(rollover, 30000);
+document.addEventListener("visibilitychange", () => { if (!document.hidden) rollover(); });
+save(); render();
+
+// ---- live wallpaper: drifting colour glows + floating particles ----
+(function(){
+  const cv = $("wall"), ctx = cv.getContext("2d");
+  const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+  const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let w = 0, h = 0;
+  const blobs = [
+    {c:"245,158,11", r:.45, s:.00018, p:0}, {c:"244,63,94", r:.38, s:.00023, p:2},
+    {c:"251,191,36", r:.42, s:.00015, p:4}, {c:"249,115,22", r:.35, s:.00021, p:6}
+  ];
+  const dots = Array.from({length:40}, () => ({x:Math.random(), y:Math.random(), r:1+Math.random()*3, v:.00003+Math.random()*.00008, d:Math.random()*6}));
+  function size(){ w = innerWidth; h = innerHeight; cv.width = w*dpr; cv.height = h*dpr; ctx.setTransform(dpr,0,0,dpr,0,0); }
+  function isDark(){ const t = document.documentElement.dataset.theme; return t ? t === "dark" : matchMedia("(prefers-color-scheme: dark)").matches; }
+  function frame(t){
+    const dk = isDark();
+    ctx.clearRect(0,0,w,h);
+    blobs.forEach(b => {
+      const x = (.5 + .38*Math.cos(t*b.s*3 + b.p)) * w, y = (.5 + .38*Math.sin(t*b.s*4 + b.p*1.3)) * h, r = b.r * Math.max(w,h);
+      const g = ctx.createRadialGradient(x,y,0,x,y,r);
+      g.addColorStop(0, `rgba(${b.c},${dk?.2:.3})`); g.addColorStop(1, `rgba(${b.c},0)`);
+      ctx.fillStyle = g; ctx.fillRect(0,0,w,h);
+    });
+    ctx.fillStyle = dk ? "rgba(255,225,160,.35)" : "rgba(217,119,6,.3)";
+    dots.forEach(d => {
+      const y = (((d.y - t*d.v) % 1) + 1) % 1, x = d.x + Math.sin(t*.0005 + d.d) * .02;
+      ctx.beginPath(); ctx.arc(x*w, y*h, d.r, 0, 6.2832); ctx.fill();
+    });
+    if (!still) requestAnimationFrame(frame);
+  }
+  size(); addEventListener("resize", () => { size(); if (still) frame(0); });
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
